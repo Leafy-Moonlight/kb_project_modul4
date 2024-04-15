@@ -1,10 +1,11 @@
 using UnityEngine;
+using System;
 
-public interface IDamageble
+public interface IHeal
 {
     public int Health { get; }
 
-    public void TakeDmg(int damage);
-    public void Heal(int heal);
-    public void Die();
+    public EventHandler<int> TakeDmg { get; }
+    public EventHandler<int> TakeHeal { get; }
+    //public void Die();
 }

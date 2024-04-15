@@ -1,18 +1,25 @@
+using System;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IDamageble
+public class Player : MonoBehaviour, IHeal
 {
     [SerializeField] private CharacterController _controller;
     [SerializeField] private Animator _animator;
     [SerializeField] private int _maxHealth = 100;
     [SerializeField] private float _speed;
 
+    private int _currentHealth;
+    private bool _isAlive = true;
+
     private Vector3 _input;
     private Camera _camera;
 
     private int _health;
 
-    public int Health => _health;
+    public int Health => _currentHealth;
+
+    public EventHandler<int> TakeDmg => OnTakeDmg;
+    public EventHandler<int> TakeHeal => OnHeal;
 
     #region UnityMethods
 
@@ -54,7 +61,7 @@ public class Player : MonoBehaviour, IDamageble
         print("Dead");
     }
 
-    public void Heal(int heal)
+    public void OnHeal(object sender, int heal)
     {
         if (_health < _maxHealth)
             _health += heal;
@@ -63,13 +70,17 @@ public class Player : MonoBehaviour, IDamageble
             _health = _maxHealth;
     }
 
-    public void TakeDmg(int damage)
+    private void OnTakeDmg(object sender, int damage)
     {
-        if (_health > damage)
-            _health -= damage;
-        else
+        if (sender is not Attacker)
+            return;
+
+        if (_currentHealth > damage)
+            _currentHealth -= damage;
+        else if (_isAlive)
         {
-            _health = 0;
+            _isAlive = false;
+            _currentHealth = 0;
             Die();
         }
     }

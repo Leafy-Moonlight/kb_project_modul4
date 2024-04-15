@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Attacker : MonoBehaviour
+public partial class Attacker : MonoBehaviour
 {
     private bool CanAttack => _attackTime <= 0;
 
@@ -40,9 +40,9 @@ public class Attacker : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            if (_hits[i].TryGetComponent<IDamageble>(out var damagble))
+            if (_hits[i].TryGetComponent<IHeal>(out var damagble))
             {
-                damagble.TakeDmg(_damage);
+                damagble.TakeDamage?.Invoke(this, _damage);
             }
         }
     }
